@@ -1,0 +1,6 @@
+sources:
+  - ./TodoRx
+templates:
+  - ./TodoRx/Sourcery/Templates
+output:
+  ./TodoRx/Sourcery/Generated
