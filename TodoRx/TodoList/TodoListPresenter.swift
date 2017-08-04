@@ -56,6 +56,8 @@ class TodoListPresenter: TodoListPresenterProtocol {
                 switch action {
                 case .none: break
                 case .some(.showCreate): interactor.todoListShowCreate()
+                case let .some(.showEdit(id)): interactor.todoListDidTapItem(id: id)
+                case let .some(.toggleItemDone(id)): break // TODO
                 }
             })
             .disposed(by: disposeBag)

@@ -1,3 +1,6 @@
+import Foundation
+
+
 <% if (types.implementing.AutoInit) { -%>
 <% for (type of types.implementing.AutoInit) { -%>
 extension <%- type.name %> {

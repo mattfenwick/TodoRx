@@ -75,6 +75,11 @@ class TodoListViewController: UIViewController {
         tableView.register(UINib(nibName: reuseIdentifier, bundle: Bundle(for: TodoListTableViewCell.self)),
                            forCellReuseIdentifier: reuseIdentifier)
 
+        tableView.rx.modelSelected(TodoListRowModel.self)
+            .map { $0.id }
+            .subscribe(didTapRowSubject)
+            .disposed(by: disposeBag)
+
         bindToPresenter()
     }
 
@@ -98,7 +103,8 @@ class TodoListViewController: UIViewController {
             indexPath: IndexPath,
             item: TodoListRowModel) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as! TodoListTableViewCell
-        cell.textLabel?.text = item.name
+        cell.nameLabel.text = item.name
+        cell.isFinishedSwitch.isOn = item.isFinished
         return cell
     }
 }

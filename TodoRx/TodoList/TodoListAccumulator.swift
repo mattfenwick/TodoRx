@@ -13,10 +13,10 @@ func todoListAccumulator(oldModel: TodoListViewModel, command: TodoListCommand) 
 
     switch command {
     case let .didTapItem(id):
-        return (oldModel, nil) // TODO
+        return (oldModel, .showEdit(itemId: id))
 
     case let .didToggleItemDone(id):
-        return (oldModel, nil) // TODO
+        return (oldModel, .toggleItemDone(itemId: id))
 
     case let .updateItems(items):
         return (oldModel.updateValues(items: items), nil)

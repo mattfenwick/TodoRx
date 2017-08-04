@@ -14,12 +14,16 @@ struct TodoListViewModel: AutoEquatable {
     var sections: [TodoListSection] {
         return items.groupElements(projection: { item in item.type })
             .map { tuple in
-                TodoListSection(sectionType: tuple.0, rows: tuple.1.map { $0.rowModel })
+                // within a group, sort by date
+                let rows = tuple.1
+                    .sorted(by: { lhs, rhs in lhs.created < rhs.created })
+                    .map { $0.rowModel }
+                return TodoListSection(sectionType: tuple.0, rows: rows)
             }
     }
 
     var sortedSections: [TodoListSection] {
-        // TODO need to start within group by date
+        // sort groups by priority
         return sections.sorted(by: { lhs, rhs in lhs.sectionType.rawValue < rhs.sectionType.rawValue })
     }
 

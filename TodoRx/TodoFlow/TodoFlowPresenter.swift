@@ -10,7 +10,10 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-class TodoFlowPresenter: TodoListInteractor, CreateTodoInteractor {
+class TodoFlowPresenter:
+        TodoListInteractor,
+        CreateTodoInteractor,
+        EditTodoInteractor {
 
     private let todoModel: Driver<TodoModel>
     private let commandSubject = PublishSubject<TodoCommand>()
@@ -24,39 +27,36 @@ class TodoFlowPresenter: TodoListInteractor, CreateTodoInteractor {
             }
             .startWith(.initialState)
 
-        let todoModelAndActions: Driver<(TodoModel, [TodoAction])> = commands.scan(
-            (TodoModel.empty, []),
+        let todoModelAndActions: Driver<(TodoModel, TodoAction?)> = commands.scan(
+            (TodoModel.empty, nil),
             accumulator: { old, command in
                 todoFlowAccumulator(old: old.0, command: command)
             })
 
         todoModel = todoModelAndActions.map { tuple in tuple.0 }
 
-        let actions = todoModelAndActions.map { tuple in tuple.1 }
+        let actions: Driver<TodoAction?> = todoModelAndActions.map { tuple in tuple.1 }
 
         presentCreateItemView = actions
-            .filter { $0.contains(.showCreate) }
+            .filter { $0 == .showCreate }
             .map { _ in }
 
         dismissCreateItemView = actions
-            .filter { $0.contains(.hideCreate) }
+            .filter { $0 == .hideCreate }
             .map { _ in }
 
         presentEditItemView = actions
-            .map { (actions: [TodoAction]) -> EditTodoIntent? in
-                for action in actions {
-                    switch action {
-                    case let .showEdit(.some(item)): return item.editTodo
-                    case .showEdit(.none): break // not sure what to do ... this is just for error-handling
-                    default: break // TODO this breaks out of the *switch*, right?  *not* the loop?
-                    }
+            .map { (action: TodoAction?) -> EditTodoIntent? in
+                switch action {
+                case let .some(.showEdit(.some(item))): return item.editTodo
+                case .some(.showEdit(.none)): return nil // not sure what to do ... this is just for error-handling
+                default: return nil
                 }
-                return nil
             }
             .filterNil()
 
         dismissEditItemView = actions
-            .filter { $0.contains(.hideEdit) }
+            .filter { $0 == .hideEdit }
             .map { _ in }
     }
 

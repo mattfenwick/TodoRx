@@ -21,10 +21,24 @@ extension CreateTodoViewModel: Equatable {
 	}
 }
 
+
+
 // MARK: EditTodoIntent Equatable
 extension EditTodoIntent: Equatable {
 	internal static func ==(lhs: EditTodoIntent, rhs: EditTodoIntent) -> Bool {
 		guard lhs.id == rhs.id else { return false }
+		guard lhs.name == rhs.name else { return false }
+		guard lhs.priority == rhs.priority else { return false }
+		return true
+	}
+}
+
+// MARK: EditTodoViewModel Equatable
+extension EditTodoViewModel: Equatable {
+	internal static func ==(lhs: EditTodoViewModel, rhs: EditTodoViewModel) -> Bool {
+		guard lhs.id == rhs.id else { return false }
+		guard lhs.initialName == rhs.initialName else { return false }
+		guard lhs.initialPriority == rhs.initialPriority else { return false }
 		guard lhs.name == rhs.name else { return false }
 		guard lhs.priority == rhs.priority else { return false }
 		return true
@@ -40,6 +54,7 @@ extension TodoItem: Equatable {
 		guard lhs.name == rhs.name else { return false }
 		guard lhs.priority == rhs.priority else { return false }
 		guard lhs.isFinished == rhs.isFinished else { return false }
+		guard lhs.created == rhs.created else { return false }
 		return true
 	}
 }
@@ -52,6 +67,7 @@ extension TodoListItem: Equatable {
 		guard lhs.name == rhs.name else { return false }
 		guard lhs.type == rhs.type else { return false }
 		guard lhs.isFinished == rhs.isFinished else { return false }
+		guard lhs.created == rhs.created else { return false }
 		return true
 	}
 }
@@ -84,7 +100,6 @@ extension TodoModel: Equatable {
 
 
 
-
 // MARK: - AutoEquatable for Enums
 
 
@@ -108,6 +123,32 @@ extension CreateTodoCommand: Equatable {
 			case let (.updatePriority(l0), .updatePriority(r0)): return l0 == r0
 			case (.didTapSave, didTapSave): return true
 			case (.didTapCancel, didTapCancel): return true
+			default: return false
+		}
+	}
+}
+
+
+// MARK: - EditTodoAction AutoEquatable
+extension EditTodoAction: Equatable {
+	internal static func ==(lhs: EditTodoAction, rhs: EditTodoAction) -> Bool {
+		switch (lhs, rhs) {
+			case (.didTapCancel, didTapCancel): return true
+			case let (.didTapSave(l0), .didTapSave(r0)): return l0 == r0
+			default: return false
+		}
+	}
+}
+
+
+// MARK: - EditTodoCommand AutoEquatable
+extension EditTodoCommand: Equatable {
+	internal static func ==(lhs: EditTodoCommand, rhs: EditTodoCommand) -> Bool {
+		switch (lhs, rhs) {
+			case let (.updateName(l0), .updateName(r0)): return l0 == r0
+			case let (.updatePriority(l0), .updatePriority(r0)): return l0 == r0
+			case (.didTapCancel, didTapCancel): return true
+			case (.didTapSave, didTapSave): return true
 			default: return false
 		}
 	}
@@ -154,19 +195,8 @@ extension TodoListAction: Equatable {
 	internal static func ==(lhs: TodoListAction, rhs: TodoListAction) -> Bool {
 		switch (lhs, rhs) {
 			case (.showCreate, showCreate): return true
-			default: return false
-		}
-	}
-}
-
-
-// MARK: - TodoPriority AutoEquatable
-extension TodoPriority: Equatable {
-	internal static func ==(lhs: TodoPriority, rhs: TodoPriority) -> Bool {
-		switch (lhs, rhs) {
-			case (.high, high): return true
-			case (.medium, medium): return true
-			case (.low, low): return true
+			case let (.showEdit(l0), .showEdit(r0)): return l0 == r0
+			case let (.toggleItemDone(l0), .toggleItemDone(r0)): return l0 == r0
 			default: return false
 		}
 	}

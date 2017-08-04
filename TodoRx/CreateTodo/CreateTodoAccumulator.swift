@@ -12,6 +12,9 @@ func createTodoAccumulator(old: CreateTodoViewModel, command: CreateTodoCommand)
     print("create todo command: \(command)")
     
     switch command {
+    case .initialState:
+        return (old, nil)
+        
     case let .updateName(name):
         let todo = old.todo.updateValues(name: name)
         return (old.updateValues(todo: todo), nil)

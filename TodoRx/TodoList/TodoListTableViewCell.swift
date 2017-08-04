@@ -13,8 +13,12 @@ class TodoListTableViewCell: UITableViewCell {
 
     private (set) var disposeBag = DisposeBag()
 
+    @IBOutlet private (set) weak var nameLabel: UILabel!
+    @IBOutlet private (set) weak var isFinishedSwitch: UISwitch!
+
     override func awakeFromNib() {
         super.awakeFromNib()
+        accessoryType = .disclosureIndicator
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {

@@ -11,12 +11,20 @@ import RxSwift
 import RxCocoa
 
 protocol CreateTodoPresenterProtocol {
-
+    var initialName: String { get }
+    var initialPriority: TodoPriority { get }
+    var isSaveButtonEnabled: Driver<Bool> { get }
+    var title: String { get }
 }
 
 class CreateTodoPresenter: CreateTodoPresenterProtocol {
 
     private let disposeBag = DisposeBag()
+
+    let initialName = ""
+    let initialPriority = TodoPriority.medium
+    let isSaveButtonEnabled: Driver<Bool>
+    let title = "Create new TODO"
 
     init(interactor: CreateTodoInteractor,
          name: Observable<String>,
@@ -31,6 +39,7 @@ class CreateTodoPresenter: CreateTodoPresenterProtocol {
                 didTapCancel.map { _ in CreateTodoCommand.didTapCancel }
             )
             .merge()
+            .startWith(.initialState)
             .asDriver { error in
                 fatalError("unexpected error: \(error)")
             }
@@ -40,6 +49,9 @@ class CreateTodoPresenter: CreateTodoPresenterProtocol {
             accumulator: { previous, command in
                 createTodoAccumulator(old: previous.0, command: command)
             })
+
+        let models = modelAndActions
+            .map { $0.0 }
 
         let actions = modelAndActions
             .map { $0.1 }
@@ -53,5 +65,9 @@ class CreateTodoPresenter: CreateTodoPresenterProtocol {
                 }
             })
             .disposed(by: disposeBag)
+
+        isSaveButtonEnabled = models
+            .map { $0.todo.name.characters.count > 0 }
+            .distinctUntilChanged()
     }
 }

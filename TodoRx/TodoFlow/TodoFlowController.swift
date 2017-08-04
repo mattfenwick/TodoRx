@@ -39,7 +39,17 @@ class TodoFlowController {
             })
             .disposed(by: disposeBag)
 
-        // TODO listen to more actions
+        flowPresenter.presentEditItemView
+            .drive(onNext: { [unowned self] item in
+                self.showEditView(item: item)
+            })
+            .disposed(by: disposeBag)
+
+        flowPresenter.dismissEditItemView
+            .drive(onNext: { [unowned self] in
+                self.hideEditView()
+            })
+            .disposed(by: disposeBag)
     }
 
     // MARK: - actions
@@ -57,11 +67,17 @@ class TodoFlowController {
     }
 
     private func showEditView(item: EditTodoIntent) {
-
+        let coordinator = EditTodoCoordinator(
+            item: item,
+            interactor: flowPresenter)
+        let navController = UINavigationController(rootViewController: coordinator.viewController)
+        viewController.present(navController, animated: true, completion: nil)
+        self.editTodoCoordinator = coordinator
     }
 
     private func hideEditView() {
-
+        viewController.dismiss(animated: true, completion: nil)
+        editTodoCoordinator = nil
     }
     
 }

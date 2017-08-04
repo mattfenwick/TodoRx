@@ -13,12 +13,14 @@ struct TodoItem: AutoInit, AutoEquatable, AutoUpdateValues {
     let name: String
     let priority: TodoPriority
     let isFinished: Bool
+    let created: Date
 
-    init(name: String, priority: TodoPriority, isFinished: Bool) {
+    init(name: String, priority: TodoPriority, isFinished: Bool, created: Date) {
         self.id = UUID().uuidString
         self.name = name
         self.priority = priority
         self.isFinished = isFinished
+        self.created = created
     }
 
     var todoListItem: TodoListItem {
@@ -26,7 +28,8 @@ struct TodoItem: AutoInit, AutoEquatable, AutoUpdateValues {
             id: id,
             name: name,
             type: priority.todoListSectionType,
-            isFinished: isFinished)
+            isFinished: isFinished,
+            created: created)
     }
 
     var editTodo: EditTodoIntent {

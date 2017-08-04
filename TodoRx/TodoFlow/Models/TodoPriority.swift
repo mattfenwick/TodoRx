@@ -8,16 +8,16 @@
 
 import Foundation
 
-enum TodoPriority: AutoEquatable {
-    case high
-    case medium
-    case low
+enum TodoPriority: Int {
+    case low = 0
+    case medium = 1
+    case high = 2
 
     var todoListSectionType: TodoListSectionType {
         switch self {
-        case .high: return .high
-        case .medium: return .medium
         case .low: return .low
+        case .medium: return .medium
+        case .high: return .high
         }
     }
 }

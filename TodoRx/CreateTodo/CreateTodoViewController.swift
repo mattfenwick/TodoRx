@@ -58,12 +58,33 @@ class CreateTodoViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        let cancelButton = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: nil)
+        let saveButton = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: nil)
+
+        navigationItem.leftBarButtonItem = cancelButton
+        navigationItem.rightBarButtonItem = saveButton
+        
+        // handle input
+
+        presenter.isSaveButtonEnabled
+            .debug("isSaveButtonEnabled")
+            .drive(saveButton.rx.isEnabled)
+            .disposed(by: disposeBag)
+
+        nameField.text = presenter.initialName
+        priorityControl.selectedSegmentIndex = presenter.initialPriority.rawValue
+        title = presenter.title
+
+        // produce output
+
         nameField.rx.text
             .orEmpty
+            .skip(1)
             .subscribe(nameSubject)
             .disposed(by: disposeBag)
 
         priorityControl.rx.value
+            .skip(1)
             .map {
                 switch $0 {
                 case 0: return .low
@@ -77,12 +98,6 @@ class CreateTodoViewController: UIViewController {
             .subscribe(prioritySubject)
             .disposed(by: disposeBag)
 
-        let cancelButton = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: nil)
-        let saveButton = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: nil)
-
-        navigationItem.leftBarButtonItem = cancelButton
-        navigationItem.rightBarButtonItem = saveButton
-
         cancelButton.rx.tap
             .subscribe(didTapCancelSubject)
             .disposed(by: disposeBag)
@@ -91,5 +106,5 @@ class CreateTodoViewController: UIViewController {
             .subscribe(didTapSaveSubject)
             .disposed(by: disposeBag)
     }
-    
+
 }

@@ -8,49 +8,49 @@
 
 import Foundation
 
-func todoFlowAccumulator(old: TodoModel, command: TodoCommand) -> (TodoModel, [TodoAction]) {
+func todoFlowAccumulator(old: TodoModel, command: TodoCommand) -> (TodoModel, TodoAction?) {
     print("todo flow command: \(command)")
 
     switch command {
     case .initialState:
-        return (old, [])
+        return (old, nil)
         
     case .showCreateView:
-        return (old, [.showCreate])
+        return (old, .showCreate)
 
     case .cancelCreate:
-        return (old, [.hideCreate])
+        return (old, .hideCreate)
 
     case let .createNewItem(item):
-        let newItem = TodoItem(name: item.name, priority: item.priority, isFinished: false)
+        let newItem = TodoItem(name: item.name, priority: item.priority, isFinished: false, created: Date())
         guard old.itemsDict[newItem.id] == nil else {
             assert(false, "duplicate id")
-            return (old, [.duplicateIdError])
+            return (old, .duplicateIdError)
         }
         var newItemsDict = old.itemsDict
         newItemsDict[newItem.id] = newItem
-        return (old.updateValues(itemsDict: newItemsDict), [.hideCreate])
+        return (old.updateValues(itemsDict: newItemsDict), .hideCreate)
 
     case let .showUpdateView(id):
         if let item = old.itemsDict[id] {
-            return (old, [.showEdit(item)])
+            return (old, .showEdit(item))
         } else {
             assert(false, "must always find an item to update")
-            return (old, [.missingIdError])
+            return (old, .missingIdError)
         }
 
     case .cancelEdit:
-        return (old, [.hideEdit])
+        return (old, .hideEdit)
 
     case let .updateItem(item):
         if let oldItem = old.itemsDict[item.id] {
             let newItem = oldItem.updateValues(name: item.name, priority: item.priority)
             var newItemsDict = old.itemsDict
             newItemsDict[item.id] = newItem
-            return (old.updateValues(itemsDict: newItemsDict), [.hideEdit])
+            return (old.updateValues(itemsDict: newItemsDict), .hideEdit)
         } else {
             assert(false, "must always find an item to update")
-            return (old, [.missingIdError])
+            return (old, .missingIdError)
         }
 
     case let .toggleItemIsFinished(id):
@@ -58,20 +58,20 @@ func todoFlowAccumulator(old: TodoModel, command: TodoCommand) -> (TodoModel, [T
             let newItem = oldItem.updateValues(isFinished: !oldItem.isFinished)
             var newItemsDict = old.itemsDict
             newItemsDict[id] = newItem
-            return (old.updateValues(itemsDict: newItemsDict), [])
+            return (old.updateValues(itemsDict: newItemsDict), nil)
         } else {
             assert(false, "must always find an item to update")
-            return (old, [.missingIdError])
+            return (old, .missingIdError)
         }
 
     case let .deleteItem(id):
         if let _ = old.itemsDict[id] {
             var newItemsDict = old.itemsDict
             newItemsDict[id] = nil
-            return (old.updateValues(itemsDict: newItemsDict), [])
+            return (old.updateValues(itemsDict: newItemsDict), nil)
         } else {
             assert(false, "must always find an item to update")
-            return (old, [.missingIdError])
+            return (old, .missingIdError)
         }
 
     }

@@ -13,5 +13,7 @@ struct TodoModel: AutoEquatable, AutoUpdateValues {
 
     var items: [TodoItem] { return Array(itemsDict.values) }
 
-    static let empty = TodoModel(itemsDict: ["123": TodoItem(id: "123", name: "medddd", priority: .medium, isFinished: false)])
+    static let empty = TodoModel(itemsDict: [
+        "123": TodoItem(id: "123", name: "medddd", priority: .medium, isFinished: false, created: Date())
+    ])
 }

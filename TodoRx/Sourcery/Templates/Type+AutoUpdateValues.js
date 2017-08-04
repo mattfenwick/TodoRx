@@ -1,3 +1,6 @@
+import Foundation
+
+
 <% for (type of types.implementing.AutoUpdateValues) { -%>
 extension <%- type.name %> {
 	<%- type.accessLevel %> func updateValues(

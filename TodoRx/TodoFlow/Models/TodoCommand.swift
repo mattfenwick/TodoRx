@@ -9,7 +9,7 @@
 import Foundation
 
 enum TodoCommand: AutoEquatable {
-    case initialState
+    case initialState // TODO is this really necessary?
     
     case showCreateView
     case cancelCreate
