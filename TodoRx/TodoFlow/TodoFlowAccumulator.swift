@@ -14,6 +14,22 @@ func todoFlowAccumulator(old: TodoModel, command: TodoCommand) -> (TodoModel, To
     switch command {
     case .initialState:
         return (old, nil)
+
+    case .fetchSavedTodos:
+        return (old, .fetchLocalTodos)
+
+    case let .didFetchSavedTodos(todos):
+        var newTodos = old.itemsDict
+        for todo in todos {
+            if let _ = newTodos[todo.id] {
+                assert(false, "unable to insert key \(todo.id), already in dictionary")
+            }
+            newTodos[todo.id] = todo
+        }
+        return (old.updateValues(itemsDict: newTodos), nil)
+
+    case .didPersistTodo:
+        return (old, nil)
         
     case .showCreateView:
         return (old, .showCreate)
@@ -29,13 +45,13 @@ func todoFlowAccumulator(old: TodoModel, command: TodoCommand) -> (TodoModel, To
         }
         var newItemsDict = old.itemsDict
         newItemsDict[newItem.id] = newItem
-        return (old.updateValues(itemsDict: newItemsDict), .hideCreate)
+        return (old.updateValues(itemsDict: newItemsDict), .saveTodo(newItem))
 
     case let .showUpdateView(id):
         if let item = old.itemsDict[id] {
             return (old, .showEdit(item))
         } else {
-            assert(false, "must always find an item to update")
+            assert(false, "must always find an item to present in update view")
             return (old, .missingIdError)
         }
 
@@ -70,7 +86,7 @@ func todoFlowAccumulator(old: TodoModel, command: TodoCommand) -> (TodoModel, To
             newItemsDict[id] = nil
             return (old.updateValues(itemsDict: newItemsDict), nil)
         } else {
-            assert(false, "must always find an item to update")
+            assert(false, "must always find an item to delete")
             return (old, .missingIdError)
         }
 

@@ -20,4 +20,9 @@ extension SharedSequenceConvertibleType where SharingStrategy == DriverSharingSt
             }
         }
     }
+
+//    func filterNil() -> Driver<E.Wrapped> {
+//        return filterMap(f: { (elem: E) -> E.Wrapped? in elem.value })
+//    }
+
 }

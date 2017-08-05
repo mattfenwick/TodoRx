@@ -9,6 +9,9 @@
 import Foundation
 
 enum TodoAction: AutoEquatable {
+    case fetchLocalTodos
+    case saveTodo(TodoItem)
+    
     case showCreate
     case hideCreate
 

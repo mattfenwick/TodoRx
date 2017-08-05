@@ -8,16 +8,20 @@
 
 import Foundation
 
-func todoRxCoreDataController() throws -> CoreDataController {
-    let documentsDirectory = try FileManager.default.url(
-        for: .documentDirectory,
-        in: .userDomainMask,
-        appropriateFor: nil,
-        create: true)
-    let storeURL = documentsDirectory.appendingPathComponent("TodoRx.sqlite")
-    let bundle = Bundle.todoRx
-    guard let modelURL = bundle.url(forResource: "TodoRx", withExtension: "momd") else {
-        throw CoreDataError.unableToObtainModelUrlError
+extension CoreDataController {
+
+    static func todoRxCoreDataController() throws -> CoreDataController {
+        let documentsDirectory = try FileManager.default.url(
+            for: .documentDirectory,
+            in: .userDomainMask,
+            appropriateFor: nil,
+            create: true)
+        let storeURL = documentsDirectory.appendingPathComponent("TodoRx.sqlite")
+        let bundle = Bundle.todoRx
+        guard let modelURL = bundle.url(forResource: "TodoRx", withExtension: "momd") else {
+            throw CoreDataError.unableToObtainModelUrlError
+        }
+        return try CoreDataController.createCoreDataController(storeURL: storeURL, modelURL: modelURL)
     }
-    return try CoreDataController.createCoreDataController(storeURL: storeURL, modelURL: modelURL)
+
 }

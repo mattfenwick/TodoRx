@@ -9,7 +9,12 @@
 import Foundation
 
 enum TodoCommand: AutoEquatable {
-    case initialState // TODO is this really necessary?
+    case initialState
+
+    case fetchSavedTodos
+    case didFetchSavedTodos([TodoItem])
+
+    case didPersistTodo(TodoItemSaveResult)
     
     case showCreateView
     case cancelCreate

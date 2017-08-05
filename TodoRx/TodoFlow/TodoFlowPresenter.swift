@@ -17,6 +17,7 @@ class TodoFlowPresenter:
 
     private let todoModel: Driver<TodoModel>
     private let commandSubject = PublishSubject<TodoCommand>()
+    private let disposeBag = DisposeBag()
 
     init(interactor: TodoFlowInteractor) {
 
@@ -26,6 +27,10 @@ class TodoFlowPresenter:
                 return Driver.empty()
             }
             .startWith(.initialState)
+            .startWith(.fetchSavedTodos)
+
+//        commandSubject.onNext(.initialState)
+//        commandSubject.onNext(.fetchSavedTodos)
 
         let todoModelAndActions: Driver<(TodoModel, TodoAction?)> = commands.scan(
             (TodoModel.empty, nil),
@@ -35,21 +40,28 @@ class TodoFlowPresenter:
 
         todoModel = todoModelAndActions.map { tuple in tuple.0 }
 
-        let actions: Driver<TodoAction?> = todoModelAndActions.map { tuple in tuple.1 }
+        let actions: Driver<TodoAction> = todoModelAndActions
+            .map { tuple in tuple.1 }
+            .filterNil()
 
         presentCreateItemView = actions
             .filter { $0 == .showCreate }
             .map { _ in }
 
         dismissCreateItemView = actions
-            .filter { $0 == .hideCreate }
+            .filter { action -> Bool in
+                switch action {
+                case .hideCreate, .saveTodo: return true
+                default: return false
+                }
+            }
             .map { _ in }
 
         presentEditItemView = actions
-            .map { (action: TodoAction?) -> EditTodoIntent? in
+            .map { (action: TodoAction) -> EditTodoIntent? in
                 switch action {
-                case let .some(.showEdit(.some(item))): return item.editTodo
-                case .some(.showEdit(.none)): return nil // not sure what to do ... this is just for error-handling
+                case let .showEdit(.some(item)): return item.editTodo
+                case .showEdit(.none): return nil // not sure what to do ... this is just for error-handling
                 default: return nil
                 }
             }
@@ -58,6 +70,42 @@ class TodoFlowPresenter:
         dismissEditItemView = actions
             .filter { $0 == .hideEdit }
             .map { _ in }
+
+        // 2-part actions that need to get something dumped back into the command/scan loop
+
+        actions
+            .filter { $0 == .fetchLocalTodos }
+            .flatMap { _ in
+                interactor.fetchTodos()
+                    .asDriver(onErrorRecover: { error in
+                        assert(false, "unexpected core data error: \(error)")
+                        return Driver.just([])
+                    })
+            }
+            .drive(onNext: { [unowned self] todos in
+                self.commandSubject.onNext(.didFetchSavedTodos(todos))
+            })
+            .disposed(by: disposeBag)
+
+        actions
+            .filterMap(f: { action -> TodoItem? in
+                switch action {
+                case let .saveTodo(todo): return todo
+                default: return nil
+                }
+            })
+            .flatMap { todo in
+                interactor.saveTodo(item: todo)
+                    .map { _ in TodoItemSaveResult(itemId: todo.id, success: true) }
+                    .asDriver(onErrorRecover: { error in
+                        assert(false, "unexpected core data error: \(error)")
+                        return Driver.just(TodoItemSaveResult(itemId: todo.id, success: false))
+                    })
+            }
+            .drive(onNext: { [unowned self] result in
+                self.commandSubject.onNext(.didPersistTodo(result))
+            })
+            .disposed(by: disposeBag)
     }
 
     // MARK: - for the flow controller

@@ -20,7 +20,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window.makeKeyAndVisible()
         self.window = window
 
-        let fc = TodoFlowController(interactor: TodoFlowDefaultInteractor())
+        let coreDataController = try! CoreDataController.todoRxCoreDataController()
+        let fc = TodoFlowController(interactor: TodoFlowDefaultInteractor(coreDataController: coreDataController))
         self.window?.rootViewController = UINavigationController(rootViewController: fc.viewController)
         todoFlowController = fc
 

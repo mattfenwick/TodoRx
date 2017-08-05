@@ -59,6 +59,15 @@ extension TodoItem: Equatable {
 	}
 }
 
+// MARK: TodoItemSaveResult Equatable
+extension TodoItemSaveResult: Equatable {
+	internal static func ==(lhs: TodoItemSaveResult, rhs: TodoItemSaveResult) -> Bool {
+		guard lhs.itemId == rhs.itemId else { return false }
+		guard lhs.success == rhs.success else { return false }
+		return true
+	}
+}
+
 
 // MARK: TodoListItem Equatable
 extension TodoListItem: Equatable {
@@ -119,6 +128,7 @@ extension CreateTodoAction: Equatable {
 extension CreateTodoCommand: Equatable {
 	internal static func ==(lhs: CreateTodoCommand, rhs: CreateTodoCommand) -> Bool {
 		switch (lhs, rhs) {
+			case (.initialState, initialState): return true
 			case let (.updateName(l0), .updateName(r0)): return l0 == r0
 			case let (.updatePriority(l0), .updatePriority(r0)): return l0 == r0
 			case (.didTapSave, didTapSave): return true
@@ -145,6 +155,7 @@ extension EditTodoAction: Equatable {
 extension EditTodoCommand: Equatable {
 	internal static func ==(lhs: EditTodoCommand, rhs: EditTodoCommand) -> Bool {
 		switch (lhs, rhs) {
+			case (.initialState, initialState): return true
 			case let (.updateName(l0), .updateName(r0)): return l0 == r0
 			case let (.updatePriority(l0), .updatePriority(r0)): return l0 == r0
 			case (.didTapCancel, didTapCancel): return true
@@ -159,6 +170,8 @@ extension EditTodoCommand: Equatable {
 extension TodoAction: Equatable {
 	internal static func ==(lhs: TodoAction, rhs: TodoAction) -> Bool {
 		switch (lhs, rhs) {
+			case (.fetchLocalTodos, fetchLocalTodos): return true
+			case let (.saveTodo(l0), .saveTodo(r0)): return l0 == r0
 			case (.showCreate, showCreate): return true
 			case (.hideCreate, hideCreate): return true
 			case let (.showEdit(l0), .showEdit(r0)): return l0 == r0
@@ -176,6 +189,9 @@ extension TodoCommand: Equatable {
 	internal static func ==(lhs: TodoCommand, rhs: TodoCommand) -> Bool {
 		switch (lhs, rhs) {
 			case (.initialState, initialState): return true
+			case (.fetchSavedTodos, fetchSavedTodos): return true
+			case let (.didFetchSavedTodos(l0), .didFetchSavedTodos(r0)): return l0 == r0
+			case let (.didPersistTodo(l0), .didPersistTodo(r0)): return l0 == r0
 			case (.showCreateView, showCreateView): return true
 			case (.cancelCreate, cancelCreate): return true
 			case let (.createNewItem(l0), .createNewItem(r0)): return l0 == r0
