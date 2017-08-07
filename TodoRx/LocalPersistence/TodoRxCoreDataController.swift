@@ -19,7 +19,7 @@ extension CoreDataController {
         let storeURL = documentsDirectory.appendingPathComponent("TodoRx.sqlite")
         let bundle = Bundle.todoRx
         guard let modelURL = bundle.url(forResource: "TodoRx", withExtension: "momd") else {
-            throw CoreDataError.unableToObtainModelUrlError
+            throw CoreDataError.unableToObtainModelUrl
         }
         return try CoreDataController.createCoreDataController(storeURL: storeURL, modelURL: modelURL)
     }

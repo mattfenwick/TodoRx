@@ -12,5 +12,6 @@ import RxSwift
 protocol TodoFlowInteractor {
     func fetchTodos() -> Single<[TodoItem]>
     func saveTodo(item: TodoItem) -> Single<Void>
+    func updateTodo(item: TodoItem) -> Single<Void>
     func deleteTodo(itemId: String) -> Single<Void>
 }

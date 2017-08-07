@@ -9,6 +9,7 @@
 import Foundation
 
 enum CoreDataError: Error {
-    case insertTypeError
-    case unableToObtainModelUrlError
+    case insertType
+    case unableToObtainModelUrl
+    case invalidItemId(String)
 }
