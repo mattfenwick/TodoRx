@@ -29,9 +29,6 @@ class TodoFlowPresenter:
             .startWith(.initialState)
             .startWith(.fetchSavedTodos)
 
-//        commandSubject.onNext(.initialState)
-//        commandSubject.onNext(.fetchSavedTodos)
-
         let todoModelAndActions: Driver<(TodoModel, TodoAction?)> = commands.scan(
             (TodoModel.empty, nil),
             accumulator: { old, command in
@@ -144,6 +141,10 @@ class TodoFlowPresenter:
 
     func todoListShowCreate() {
         commandSubject.onNext(.showCreateView)
+    }
+
+    func todoListToggleItemIsFinished(id: String) {
+        commandSubject.onNext(.toggleItemIsFinished(id: id))
     }
 
     lazy private (set) var todoListItems: Driver<[TodoListItem]> = self.todoModel

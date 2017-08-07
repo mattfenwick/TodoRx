@@ -23,11 +23,13 @@ class TodoListViewController: UIViewController {
 
     private let didTapRowSubject = PublishSubject<String>()
     private let didTapCreateTodoSubject = PublishSubject<Void>()
+    private let didToggleItemIsFinishedSubject = PublishSubject<String>()
 
     // MARK: output
 
     let didTapRow: Observable<String>
     let didTapCreateTodo: Observable<Void>
+    let didToggleItemIsFinished: Observable<String>
 
     // MARK: ui elements
 
@@ -43,6 +45,7 @@ class TodoListViewController: UIViewController {
     init() {
         didTapRow = didTapRowSubject.asObservable()
         didTapCreateTodo = didTapCreateTodoSubject.asObservable()
+        didToggleItemIsFinished = didToggleItemIsFinishedSubject.asObservable()
         super.init(nibName: "TodoListViewController", bundle: Bundle(for: TodoListViewController.self))
     }
 
@@ -105,6 +108,10 @@ class TodoListViewController: UIViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as! TodoListTableViewCell
         cell.nameLabel.text = item.name
         cell.isFinishedSwitch.isOn = item.isFinished
+        cell.isFinishedSwitch.rx.controlEvent(.valueChanged)
+            .map { _ in item.id }
+            .subscribe(onNext: didToggleItemIsFinishedSubject.onNext)
+            .disposed(by: cell.disposeBag)
         return cell
     }
 }
