@@ -14,7 +14,7 @@ enum TodoCommand: AutoEquatable {
     case fetchSavedTodos
     case didFetchSavedTodos([TodoItem])
 
-    case didPersistTodo(TodoItemSaveResult)
+    case didCompletePersistenceAction(TodoItemPersistenceResult)
     
     case showCreateView
     case cancelCreate

@@ -28,7 +28,7 @@ func todoFlowAccumulator(old: TodoModel, command: TodoCommand) -> (TodoModel, To
         }
         return (old.updateValues(itemsDict: newTodos), nil)
 
-    case .didPersistTodo:
+    case .didCompletePersistenceAction:
         return (old, nil)
         
     case .showCreateView:
@@ -63,7 +63,9 @@ func todoFlowAccumulator(old: TodoModel, command: TodoCommand) -> (TodoModel, To
             let newItem = oldItem.updateValues(name: item.name, priority: item.priority)
             var newItemsDict = old.itemsDict
             newItemsDict[item.id] = newItem
-            return (old.updateValues(itemsDict: newItemsDict), .hideEdit)
+            // TODO we also need to hide the VC.
+            // how do we do that?
+            return (old.updateValues(itemsDict: newItemsDict), .updateTodo(newItem))
         } else {
             assert(false, "must always find an item to update")
             return (old, .missingIdError)
@@ -74,7 +76,7 @@ func todoFlowAccumulator(old: TodoModel, command: TodoCommand) -> (TodoModel, To
             let newItem = oldItem.updateValues(isFinished: !oldItem.isFinished)
             var newItemsDict = old.itemsDict
             newItemsDict[id] = newItem
-            return (old.updateValues(itemsDict: newItemsDict), nil)
+            return (old.updateValues(itemsDict: newItemsDict), .updateTodo(newItem))
         } else {
             assert(false, "must always find an item to update")
             return (old, .missingIdError)

@@ -10,7 +10,9 @@
 		4167214C1F35E35700B3BE00 /* NSManagedObjectContext+performSingle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4167214B1F35E35700B3BE00 /* NSManagedObjectContext+performSingle.swift */; };
 		4167214F1F35E46100B3BE00 /* TodoRx.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 4167214D1F35E46100B3BE00 /* TodoRx.xcdatamodeld */; };
 		416721511F35F5CA00B3BE00 /* Driver+FilterMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 416721501F35F5CA00B3BE00 /* Driver+FilterMap.swift */; };
-		416721531F35F95500B3BE00 /* TodoItemSaveResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 416721521F35F95500B3BE00 /* TodoItemSaveResult.swift */; };
+		416721531F35F95500B3BE00 /* TodoItemPersistenceResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 416721521F35F95500B3BE00 /* TodoItemPersistenceResult.swift */; };
+		416721551F38A71D00B3BE00 /* TodoItemPersistenceAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 416721541F38A71D00B3BE00 /* TodoItemPersistenceAction.swift */; };
+		416721571F38AEFF00B3BE00 /* TodoState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 416721561F38AEFF00B3BE00 /* TodoState.swift */; };
 		416E115E1F1E921000FD0A21 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 416E115D1F1E921000FD0A21 /* AppDelegate.swift */; };
 		416E11651F1E921000FD0A21 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 416E11641F1E921000FD0A21 /* Assets.xcassets */; };
 		416E11681F1E921000FD0A21 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 416E11661F1E921000FD0A21 /* LaunchScreen.storyboard */; };
@@ -120,7 +122,9 @@
 		4167214B1F35E35700B3BE00 /* NSManagedObjectContext+performSingle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "NSManagedObjectContext+performSingle.swift"; path = "LocalPersistence/NSManagedObjectContext+performSingle.swift"; sourceTree = "<group>"; };
 		4167214E1F35E46100B3BE00 /* TodoRx.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = TodoRx.xcdatamodel; sourceTree = "<group>"; };
 		416721501F35F5CA00B3BE00 /* Driver+FilterMap.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Driver+FilterMap.swift"; path = "Extensions/Driver+FilterMap.swift"; sourceTree = "<group>"; };
-		416721521F35F95500B3BE00 /* TodoItemSaveResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TodoItemSaveResult.swift; path = TodoFlow/Models/TodoItemSaveResult.swift; sourceTree = "<group>"; };
+		416721521F35F95500B3BE00 /* TodoItemPersistenceResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TodoItemPersistenceResult.swift; path = TodoFlow/Models/TodoItemPersistenceResult.swift; sourceTree = "<group>"; };
+		416721541F38A71D00B3BE00 /* TodoItemPersistenceAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TodoItemPersistenceAction.swift; path = TodoFlow/Models/TodoItemPersistenceAction.swift; sourceTree = "<group>"; };
+		416721561F38AEFF00B3BE00 /* TodoState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TodoState.swift; path = TodoFlow/Models/TodoState.swift; sourceTree = "<group>"; };
 		416E115A1F1E921000FD0A21 /* TodoRx.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TodoRx.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		416E115D1F1E921000FD0A21 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		416E11641F1E921000FD0A21 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -374,7 +378,9 @@
 				417CB4681F227D9300F70424 /* TodoPriority.swift */,
 				417CB46A1F227E4900F70424 /* TodoCommand.swift */,
 				417CB4721F22846A00F70424 /* TodoAction.swift */,
-				416721521F35F95500B3BE00 /* TodoItemSaveResult.swift */,
+				416721521F35F95500B3BE00 /* TodoItemPersistenceResult.swift */,
+				416721541F38A71D00B3BE00 /* TodoItemPersistenceAction.swift */,
+				416721561F38AEFF00B3BE00 /* TodoState.swift */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -605,6 +611,7 @@
 			files = (
 				417CB4A51F23E6EA00F70424 /* TodoListAction.swift in Sources */,
 				4167214F1F35E46100B3BE00 /* TodoRx.xcdatamodeld in Sources */,
+				416721571F38AEFF00B3BE00 /* TodoState.swift in Sources */,
 				419059791F1FADE900037C22 /* TodoListItem.swift in Sources */,
 				41BAF0181F34CD3500137CAE /* TodoRxCoreDataController.swift in Sources */,
 				4190597E1F1FB05000037C22 /* Sequence+Group.swift in Sources */,
@@ -648,8 +655,9 @@
 				416E11AE1F1F9BA100FD0A21 /* TodoListPresenter.swift in Sources */,
 				417CB49D1F23DC8500F70424 /* CreateTodoAccumulator.swift in Sources */,
 				417CB4891F2292C100F70424 /* Sequence+FilterNil.swift in Sources */,
+				416721551F38A71D00B3BE00 /* TodoItemPersistenceAction.swift in Sources */,
 				417CB4841F22919300F70424 /* Driver+FilterNil.swift in Sources */,
-				416721531F35F95500B3BE00 /* TodoItemSaveResult.swift in Sources */,
+				416721531F35F95500B3BE00 /* TodoItemPersistenceResult.swift in Sources */,
 				41BAF00F1F34BEC500137CAE /* EditTodoAction.swift in Sources */,
 				417CB4A31F23E07B00F70424 /* CreateTodoInteractor.swift in Sources */,
 				417CB48B1F22947500F70424 /* CreateTodoCoordinator.swift in Sources */,

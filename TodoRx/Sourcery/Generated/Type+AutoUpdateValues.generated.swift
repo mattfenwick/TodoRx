@@ -56,9 +56,11 @@ extension TodoItem {
 
 extension TodoModel {
 	internal func updateValues(
-			itemsDict: [String: TodoItem]? = nil) -> TodoModel {
+			itemsDict: [String: TodoItem]? = nil,
+			state: TodoState? = nil) -> TodoModel {
 		return TodoModel(
-			itemsDict: itemsDict ?? self.itemsDict)
+			itemsDict: itemsDict ?? self.itemsDict,
+			state: state ?? self.state)
 	}
 }
 

@@ -10,9 +10,10 @@ import Foundation
 
 struct TodoModel: AutoEquatable, AutoUpdateValues {
     let itemsDict: [String: TodoItem]
+    let state: TodoState
 
     var items: [TodoItem] { return Array(itemsDict.values) }
 
-    static let empty = TodoModel(itemsDict: [:])
+    static let empty = TodoModel(itemsDict: [:], state: .todoList)
 
 }

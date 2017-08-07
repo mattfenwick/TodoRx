@@ -85,22 +85,44 @@ class TodoFlowPresenter:
             .disposed(by: disposeBag)
 
         actions
-            .filterMap(f: { action -> TodoItem? in
+            .filterMap { (action: TodoAction) -> Single<TodoItemPersistenceResult>? in
                 switch action {
-                case let .saveTodo(todo): return todo
-                default: return nil
+                case let .saveTodo(todo):
+                    return interactor.saveTodo(item: todo)
+                        .map { _ in true }
+                        .catchError { error in
+                            assert(false, "unexpected core data error: \(error)")
+                            return Single.just(false)
+                        }
+                        .map { success in TodoItemPersistenceResult(itemId: todo.id, action: .save, success: success) }
+
+                case let .updateTodo(todo):
+                    return interactor.updateTodo(item: todo)
+                        .map { _ in true }
+                        .catchError { error in
+                            assert(false, "unexpected core data error: \(error)")
+                            return Single.just(false)
+                        }
+                        .map { success in TodoItemPersistenceResult(itemId: todo.id, action: .update, success: success) }
+
+                case let .deleteTodo(id):
+                    return interactor.deleteTodo(itemId: id)
+                        .map { _ in true }
+                        .catchError { error in
+                            assert(false, "unexpected core data error: \(error)")
+                            return Single.just(false)
+                        }
+                        .map { success in TodoItemPersistenceResult(itemId: id, action: .delete, success: success) }
+
+                default:
+                    return nil
                 }
-            })
-            .flatMap { todo in
-                interactor.saveTodo(item: todo)
-                    .map { _ in TodoItemSaveResult(itemId: todo.id, success: true) }
-                    .asDriver(onErrorRecover: { error in
-                        assert(false, "unexpected core data error: \(error)")
-                        return Driver.just(TodoItemSaveResult(itemId: todo.id, success: false))
-                    })
+            }
+            .flatMap { single in
+                single.asDriver { error in fatalError("unexpected error: \(error)") }
             }
             .drive(onNext: { [unowned self] result in
-                self.commandSubject.onNext(.didPersistTodo(result))
+                self.commandSubject.onNext(.didCompletePersistenceAction(result))
             })
             .disposed(by: disposeBag)
     }

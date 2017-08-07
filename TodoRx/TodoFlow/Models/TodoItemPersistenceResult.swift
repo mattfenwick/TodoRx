@@ -8,7 +8,8 @@
 
 import Foundation
 
-struct TodoItemSaveResult: AutoEquatable {
+struct TodoItemPersistenceResult: AutoEquatable {
     let itemId: String
+    let action: TodoItemPersistenceAction
     let success: Bool
 }
