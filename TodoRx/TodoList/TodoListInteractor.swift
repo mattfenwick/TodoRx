@@ -13,6 +13,7 @@ protocol TodoListInteractor {
     func todoListDidTapItem(id: String)
     func todoListShowCreate()
     func todoListToggleItemIsFinished(id: String)
+    func todoListDeleteItem(id: String)
 
     var todoListItems: Driver<[TodoListItem]> { get }
 }

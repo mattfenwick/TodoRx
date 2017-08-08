@@ -12,4 +12,5 @@ enum TodoListAction: AutoEquatable {
     case showCreate
     case showEdit(itemId: String)
     case toggleItemDone(itemId: String)
+    case deleteItem(itemId: String)
 }

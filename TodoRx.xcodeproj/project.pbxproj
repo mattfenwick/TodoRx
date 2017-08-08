@@ -44,7 +44,6 @@
 		417CB46B1F227E4900F70424 /* TodoCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 417CB46A1F227E4900F70424 /* TodoCommand.swift */; };
 		417CB46E1F22819300F70424 /* EditTodoIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 417CB46D1F22819300F70424 /* EditTodoIntent.swift */; };
 		417CB4711F2281C200F70424 /* CreateTodoIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 417CB4701F2281C200F70424 /* CreateTodoIntent.swift */; };
-		417CB4731F22846A00F70424 /* TodoAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 417CB4721F22846A00F70424 /* TodoAction.swift */; };
 		417CB4771F22890600F70424 /* AutoEquatable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 417CB4761F22890600F70424 /* AutoEquatable.swift */; };
 		417CB47A1F22897E00F70424 /* Type+AutoEquatable.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 417CB4791F22897E00F70424 /* Type+AutoEquatable.generated.swift */; };
 		417CB47C1F22898700F70424 /* Type+AutoUpdateValues.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 417CB47B1F22898700F70424 /* Type+AutoUpdateValues.generated.swift */; };
@@ -83,6 +82,7 @@
 		41CED9D61F1FA97E00A80709 /* TodoListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41CED9D41F1FA97E00A80709 /* TodoListTableViewCell.swift */; };
 		41CED9D71F1FA97E00A80709 /* TodoListTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 41CED9D51F1FA97E00A80709 /* TodoListTableViewCell.xib */; };
 		41CED9D91F1FA9E100A80709 /* TodoListSectionType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41CED9D81F1FA9E100A80709 /* TodoListSectionType.swift */; };
+		41E1DFA71F3CC07E0076C256 /* TodoTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41E1DFA61F3CC07E0076C256 /* TodoTransition.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -161,7 +161,6 @@
 		417CB46A1F227E4900F70424 /* TodoCommand.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TodoCommand.swift; path = TodoFlow/Models/TodoCommand.swift; sourceTree = "<group>"; };
 		417CB46D1F22819300F70424 /* EditTodoIntent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = EditTodoIntent.swift; path = EditTodo/Models/EditTodoIntent.swift; sourceTree = "<group>"; };
 		417CB4701F2281C200F70424 /* CreateTodoIntent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CreateTodoIntent.swift; path = CreateTodo/Models/CreateTodoIntent.swift; sourceTree = "<group>"; };
-		417CB4721F22846A00F70424 /* TodoAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TodoAction.swift; path = TodoFlow/Models/TodoAction.swift; sourceTree = "<group>"; };
 		417CB4761F22890600F70424 /* AutoEquatable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AutoEquatable.swift; path = Sourcery/MarkerProtocols/AutoEquatable.swift; sourceTree = "<group>"; };
 		417CB4791F22897E00F70424 /* Type+AutoEquatable.generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Type+AutoEquatable.generated.swift"; path = "Sourcery/Generated/Type+AutoEquatable.generated.swift"; sourceTree = "<group>"; };
 		417CB47B1F22898700F70424 /* Type+AutoUpdateValues.generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Type+AutoUpdateValues.generated.swift"; path = "Sourcery/Generated/Type+AutoUpdateValues.generated.swift"; sourceTree = "<group>"; };
@@ -200,6 +199,7 @@
 		41CED9D41F1FA97E00A80709 /* TodoListTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TodoListTableViewCell.swift; path = TodoList/TodoListTableViewCell.swift; sourceTree = "<group>"; };
 		41CED9D51F1FA97E00A80709 /* TodoListTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = TodoListTableViewCell.xib; path = TodoList/TodoListTableViewCell.xib; sourceTree = "<group>"; };
 		41CED9D81F1FA9E100A80709 /* TodoListSectionType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TodoListSectionType.swift; path = TodoList/Models/TodoListSectionType.swift; sourceTree = "<group>"; };
+		41E1DFA61F3CC07E0076C256 /* TodoTransition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TodoTransition.swift; path = TodoFlow/Models/TodoTransition.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -377,10 +377,10 @@
 				417CB4661F227D4A00F70424 /* TodoModel.swift */,
 				417CB4681F227D9300F70424 /* TodoPriority.swift */,
 				417CB46A1F227E4900F70424 /* TodoCommand.swift */,
-				417CB4721F22846A00F70424 /* TodoAction.swift */,
 				416721521F35F95500B3BE00 /* TodoItemPersistenceResult.swift */,
 				416721541F38A71D00B3BE00 /* TodoItemPersistenceAction.swift */,
 				416721561F38AEFF00B3BE00 /* TodoState.swift */,
+				41E1DFA61F3CC07E0076C256 /* TodoTransition.swift */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -647,6 +647,7 @@
 				41BAF0091F34B55900137CAE /* EditTodoAccumulator.swift in Sources */,
 				41CED9D61F1FA97E00A80709 /* TodoListTableViewCell.swift in Sources */,
 				417CB49B1F23DC7600F70424 /* CreateTodoCommand.swift in Sources */,
+				41E1DFA71F3CC07E0076C256 /* TodoTransition.swift in Sources */,
 				417CB4671F227D4A00F70424 /* TodoModel.swift in Sources */,
 				41BAF0141F34CC4C00137CAE /* CoreDataControllerSaveResult.swift in Sources */,
 				41BAF0121F34CA3800137CAE /* CoreDataController.swift in Sources */,
@@ -663,7 +664,6 @@
 				417CB48B1F22947500F70424 /* CreateTodoCoordinator.swift in Sources */,
 				417CB4901F23D81000F70424 /* CreateTodoViewController.swift in Sources */,
 				41BAF01C1F34CD8B00137CAE /* Bundle+TodoRx.swift in Sources */,
-				417CB4731F22846A00F70424 /* TodoAction.swift in Sources */,
 				416E11BA1F1F9DB700FD0A21 /* TodoListSection.swift in Sources */,
 				41BAF0071F34B53E00137CAE /* EditTodoInteractor.swift in Sources */,
 				4190597B1F1FAE4400037C22 /* TodoListCommand.swift in Sources */,

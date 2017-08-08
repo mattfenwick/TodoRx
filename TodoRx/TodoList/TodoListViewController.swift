@@ -24,12 +24,14 @@ class TodoListViewController: UIViewController {
     private let didTapRowSubject = PublishSubject<String>()
     private let didTapCreateTodoSubject = PublishSubject<Void>()
     private let didToggleItemIsFinishedSubject = PublishSubject<String>()
+    private let didDeleteItemSubject = PublishSubject<String>()
 
     // MARK: output
 
     let didTapRow: Observable<String>
     let didTapCreateTodo: Observable<Void>
     let didToggleItemIsFinished: Observable<String>
+    let didDeleteItem: Observable<String>
 
     // MARK: ui elements
 
@@ -46,6 +48,7 @@ class TodoListViewController: UIViewController {
         didTapRow = didTapRowSubject.asObservable()
         didTapCreateTodo = didTapCreateTodoSubject.asObservable()
         didToggleItemIsFinished = didToggleItemIsFinishedSubject.asObservable()
+        didDeleteItem = didDeleteItemSubject.asObservable()
         super.init(nibName: "TodoListViewController", bundle: Bundle(for: TodoListViewController.self))
     }
 
@@ -75,12 +78,22 @@ class TodoListViewController: UIViewController {
             ds[index].model
         }
 
+        dataSource.canEditRowAtIndexPath = { _ in true }
+
         tableView.register(UINib(nibName: reuseIdentifier, bundle: Bundle(for: TodoListTableViewCell.self)),
                            forCellReuseIdentifier: reuseIdentifier)
+
+        tableView.rowHeight = UITableViewAutomaticDimension
+        tableView.estimatedRowHeight = 70.0
 
         tableView.rx.modelSelected(TodoListRowModel.self)
             .map { $0.id }
             .subscribe(didTapRowSubject)
+            .disposed(by: disposeBag)
+
+        tableView.rx.modelDeleted(TodoListRowModel.self)
+            .map { $0.id }
+            .subscribe(didDeleteItemSubject)
             .disposed(by: disposeBag)
 
         bindToPresenter()
@@ -107,11 +120,13 @@ class TodoListViewController: UIViewController {
             item: TodoListRowModel) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as! TodoListTableViewCell
         cell.nameLabel.text = item.name
-        cell.isFinishedSwitch.isOn = item.isFinished
-        cell.isFinishedSwitch.rx.controlEvent(.valueChanged)
+        cell.dateLabel.text = item.formattedDate
+        cell.isFinished = item.isFinished
+        cell.isFinishedButton.rx.tap
             .map { _ in item.id }
             .subscribe(onNext: didToggleItemIsFinishedSubject.onNext)
             .disposed(by: cell.disposeBag)
         return cell
     }
+
 }

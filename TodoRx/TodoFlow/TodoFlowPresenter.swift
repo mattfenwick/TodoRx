@@ -18,6 +18,7 @@ class TodoFlowPresenter:
     private let todoModel: Driver<TodoModel>
     private let commandSubject = PublishSubject<TodoCommand>()
     private let disposeBag = DisposeBag()
+    private let accumulator: (TodoModel, TodoCommand) -> (TodoModel, Observable<TodoCommand>?)
 
     init(interactor: TodoFlowInteractor) {
 
@@ -29,101 +30,72 @@ class TodoFlowPresenter:
             .startWith(.initialState)
             .startWith(.fetchSavedTodos)
 
-        let todoModelAndActions: Driver<(TodoModel, TodoAction?)> = commands.scan(
+        let accumulator = todoFlowAccumulator(interactor: interactor)
+
+        let todoOutput: Driver<(TodoModel, Observable<TodoCommand>?)> = commands.scan(
             (TodoModel.empty, nil),
             accumulator: { old, command in
-                todoFlowAccumulator(old: old.0, command: command)
+                accumulator(old.0, command)
             })
 
-        todoModel = todoModelAndActions.map { tuple in tuple.0 }
+        self.accumulator = accumulator
+        todoModel = todoOutput.map { tuple in tuple.0 }
 
-        let actions: Driver<TodoAction> = todoModelAndActions
-            .map { tuple in tuple.1 }
-            .filterNil()
+        let states: Driver<(TodoState, TodoState)> = todoModel
+            .map { $0.state }
+            .scan((TodoState.todoList, TodoState.todoList),
+                  accumulator: { previous, current in (previous.1, current) })
 
-        presentCreateItemView = actions
-            .filter { $0 == .showCreate }
-            .map { _ in }
-
-        dismissCreateItemView = actions
-            .filter { action -> Bool in
-                switch action {
-                case .hideCreate, .saveTodo: return true
-                default: return false
-                }
-            }
-            .map { _ in }
-
-        presentEditItemView = actions
-            .map { (action: TodoAction) -> EditTodoIntent? in
-                switch action {
-                case let .showEdit(.some(item)): return item.editTodo
-                case .showEdit(.none): return nil // not sure what to do ... this is just for error-handling
+        presentCreateItemView = states
+            .map { (pair: (TodoState, TodoState)) -> Void? in
+                switch pair {
+                case (.todoList, .create): return ()
                 default: return nil
                 }
             }
             .filterNil()
 
-        dismissEditItemView = actions
-            .filter { $0 == .hideEdit }
-            .map { _ in }
+        dismissCreateItemView = states
+            .map { (pair: (TodoState, TodoState)) -> Void? in
+                switch pair {
+                case (.create, .todoList): return ()
+                default: return nil
+                }
+            }
+            .filterNil()
+
+        presentEditItemView = states
+            .map { (pair: (TodoState, TodoState)) -> EditTodoIntent? in
+                switch pair {
+                case let (.todoList, .edit(item)): return item.editTodo
+                default: return nil
+                }
+            }
+            .filterNil()
+
+        dismissEditItemView = states
+            .map { (pair: (TodoState, TodoState)) -> Void? in
+                switch pair {
+                case (.edit, .todoList): return ()
+                default: return nil
+                }
+            }
+            .filterNil()
 
         // 2-part actions that need to get something dumped back into the command/scan loop
 
-        actions
-            .filter { $0 == .fetchLocalTodos }
-            .flatMap { _ in
-                interactor.fetchTodos()
-                    .asDriver(onErrorRecover: { error in
-                        assert(false, "unexpected core data error: \(error)")
-                        return Driver.just([])
-                    })
+        let feedback: Driver<Observable<TodoCommand>> = todoOutput
+            .map { tuple in tuple.1 }
+            .filterNil()
+
+        feedback
+            .flatMap {
+                $0.asDriver(onErrorRecover: { error in
+                    assert(false, "unexpected error: \(error)")
+                    return Driver.empty()
+                })
             }
-            .drive(onNext: { [unowned self] todos in
-                self.commandSubject.onNext(.didFetchSavedTodos(todos))
-            })
-            .disposed(by: disposeBag)
-
-        actions
-            .filterMap { (action: TodoAction) -> Single<TodoItemPersistenceResult>? in
-                switch action {
-                case let .saveTodo(todo):
-                    return interactor.saveTodo(item: todo)
-                        .map { _ in true }
-                        .catchError { error in
-                            assert(false, "unexpected core data error: \(error)")
-                            return Single.just(false)
-                        }
-                        .map { success in TodoItemPersistenceResult(itemId: todo.id, action: .save, success: success) }
-
-                case let .updateTodo(todo):
-                    return interactor.updateTodo(item: todo)
-                        .map { _ in true }
-                        .catchError { error in
-                            assert(false, "unexpected core data error: \(error)")
-                            return Single.just(false)
-                        }
-                        .map { success in TodoItemPersistenceResult(itemId: todo.id, action: .update, success: success) }
-
-                case let .deleteTodo(id):
-                    return interactor.deleteTodo(itemId: id)
-                        .map { _ in true }
-                        .catchError { error in
-                            assert(false, "unexpected core data error: \(error)")
-                            return Single.just(false)
-                        }
-                        .map { success in TodoItemPersistenceResult(itemId: id, action: .delete, success: success) }
-
-                default:
-                    return nil
-                }
-            }
-            .flatMap { single in
-                single.asDriver { error in fatalError("unexpected error: \(error)") }
-            }
-            .drive(onNext: { [unowned self] result in
-                self.commandSubject.onNext(.didCompletePersistenceAction(result))
-            })
+            .drive(onNext: commandSubject.onNext)
             .disposed(by: disposeBag)
     }
 
@@ -167,6 +139,10 @@ class TodoFlowPresenter:
 
     func todoListToggleItemIsFinished(id: String) {
         commandSubject.onNext(.toggleItemIsFinished(id: id))
+    }
+
+    func todoListDeleteItem(id: String) {
+        commandSubject.onNext(.deleteItem(id: id))
     }
 
     lazy private (set) var todoListItems: Driver<[TodoListItem]> = self.todoModel

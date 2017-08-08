@@ -16,7 +16,7 @@ struct TodoListItem: AutoEquatable {
     let created: Date
 
     var rowModel: TodoListRowModel {
-        return TodoListRowModel(id: id, name: name, isFinished: isFinished)
+        return TodoListRowModel(id: id, name: name, created: created, isFinished: isFinished)
     }
 
 }

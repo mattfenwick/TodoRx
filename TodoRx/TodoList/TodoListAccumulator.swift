@@ -18,6 +18,9 @@ func todoListAccumulator(oldModel: TodoListViewModel, command: TodoListCommand) 
     case let .didToggleItemDone(id):
         return (oldModel, .toggleItemDone(itemId: id))
 
+    case let .didDeleteItem(id):
+        return (oldModel, .deleteItem(itemId: id))
+
     case let .updateItems(items):
         return (oldModel.updateValues(items: items), nil)
         

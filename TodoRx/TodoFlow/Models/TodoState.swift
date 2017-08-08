@@ -11,5 +11,5 @@ import Foundation
 enum TodoState: AutoEquatable {
     case todoList
     case create
-    case edit
+    case edit(TodoItem)
 }

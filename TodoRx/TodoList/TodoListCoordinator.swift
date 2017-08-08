@@ -19,7 +19,8 @@ class TodoListCoordinator {
             interactor: interactor,
             didTapCreateTodo: viewController.didTapCreateTodo,
             didTapRow: viewController.didTapRow,
-            didToggleItemIsFinished: viewController.didToggleItemIsFinished)
+            didToggleItemIsFinished: viewController.didToggleItemIsFinished,
+            didDeleteItem: viewController.didDeleteItem)
         viewController.presenter = presenter
 
         self.viewController = viewController

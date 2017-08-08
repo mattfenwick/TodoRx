@@ -23,11 +23,13 @@ class TodoListPresenter: TodoListPresenterProtocol {
     init(interactor: TodoListInteractor,
          didTapCreateTodo: Observable<Void>,
          didTapRow: Observable<String>,
-         didToggleItemIsFinished: Observable<String>) {
+         didToggleItemIsFinished: Observable<String>,
+         didDeleteItem: Observable<String>) {
         let commands: Driver<TodoListCommand> = Observable<Observable<TodoListCommand>>.of(
                 didTapCreateTodo.map { _ in TodoListCommand.didTapCreateTodo },
                 didTapRow.map(TodoListCommand.didTapItem),
                 didToggleItemIsFinished.map(TodoListCommand.didToggleItemDone),
+                didDeleteItem.map(TodoListCommand.didDeleteItem),
                 interactor.todoListItems.map(TodoListCommand.updateItems).asObservable()
             )
             .merge()
@@ -59,6 +61,7 @@ class TodoListPresenter: TodoListPresenterProtocol {
                 case .showCreate: interactor.todoListShowCreate()
                 case let .showEdit(id): interactor.todoListDidTapItem(id: id)
                 case let .toggleItemDone(id): interactor.todoListToggleItemIsFinished(id: id)
+                case let .deleteItem(itemId): interactor.todoListDeleteItem(id: itemId)
                 }
             })
             .disposed(by: disposeBag)

@@ -46,7 +46,6 @@ extension EditTodoViewModel: Equatable {
 }
 
 
-
 // MARK: TodoItem Equatable
 extension TodoItem: Equatable {
 	internal static func ==(lhs: TodoItem, rhs: TodoItem) -> Bool {
@@ -69,6 +68,7 @@ extension TodoItemPersistenceResult: Equatable {
 		return true
 	}
 }
+
 
 
 // MARK: TodoListItem Equatable
@@ -108,6 +108,7 @@ extension TodoModel: Equatable {
 		return true
 	}
 }
+
 
 
 
@@ -170,26 +171,6 @@ extension EditTodoCommand: Equatable {
 }
 
 
-// MARK: - TodoAction AutoEquatable
-extension TodoAction: Equatable {
-	internal static func ==(lhs: TodoAction, rhs: TodoAction) -> Bool {
-		switch (lhs, rhs) {
-			case (.fetchLocalTodos, fetchLocalTodos): return true
-			case let (.saveTodo(l0), .saveTodo(r0)): return l0 == r0
-			case let (.updateTodo(l0), .updateTodo(r0)): return l0 == r0
-			case let (.deleteTodo(l0), .deleteTodo(r0)): return l0 == r0
-			case (.showCreate, showCreate): return true
-			case (.hideCreate, hideCreate): return true
-			case let (.showEdit(l0), .showEdit(r0)): return l0 == r0
-			case (.hideEdit, hideEdit): return true
-			case (.duplicateIdError, duplicateIdError): return true
-			case (.missingIdError, missingIdError): return true
-			default: return false
-		}
-	}
-}
-
-
 // MARK: - TodoCommand AutoEquatable
 extension TodoCommand: Equatable {
 	internal static func ==(lhs: TodoCommand, rhs: TodoCommand) -> Bool {
@@ -232,6 +213,22 @@ extension TodoListAction: Equatable {
 			case (.showCreate, showCreate): return true
 			case let (.showEdit(l0), .showEdit(r0)): return l0 == r0
 			case let (.toggleItemDone(l0), .toggleItemDone(r0)): return l0 == r0
+			case let (.deleteItem(l0), .deleteItem(r0)): return l0 == r0
+			default: return false
+		}
+	}
+}
+
+
+// MARK: - TodoListCommand AutoEquatable
+extension TodoListCommand: Equatable {
+	internal static func ==(lhs: TodoListCommand, rhs: TodoListCommand) -> Bool {
+		switch (lhs, rhs) {
+			case let (.didTapItem(l0), .didTapItem(r0)): return l0 == r0
+			case let (.didToggleItemDone(l0), .didToggleItemDone(r0)): return l0 == r0
+			case let (.didDeleteItem(l0), .didDeleteItem(r0)): return l0 == r0
+			case let (.updateItems(l0), .updateItems(r0)): return l0 == r0
+			case (.didTapCreateTodo, didTapCreateTodo): return true
 			default: return false
 		}
 	}
@@ -244,7 +241,21 @@ extension TodoState: Equatable {
 		switch (lhs, rhs) {
 			case (.todoList, todoList): return true
 			case (.create, create): return true
-			case (.edit, edit): return true
+			case let (.edit(l0), .edit(r0)): return l0 == r0
+			default: return false
+		}
+	}
+}
+
+
+// MARK: - TodoTransition AutoEquatable
+extension TodoTransition: Equatable {
+	internal static func ==(lhs: TodoTransition, rhs: TodoTransition) -> Bool {
+		switch (lhs, rhs) {
+			case (.showCreate, showCreate): return true
+			case (.hideCreate, hideCreate): return true
+			case let (.showEdit(l0), .showEdit(r0)): return l0 == r0
+			case (.hideEdit, hideEdit): return true
 			default: return false
 		}
 	}

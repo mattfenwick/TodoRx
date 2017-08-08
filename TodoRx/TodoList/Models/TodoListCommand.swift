@@ -8,9 +8,10 @@
 
 import Foundation
 
-enum TodoListCommand {
+enum TodoListCommand: AutoEquatable {
     case didTapItem(id: String)
     case didToggleItemDone(id: String)
+    case didDeleteItem(id: String)
     case updateItems([TodoListItem])
     case didTapCreateTodo
 }
